@@ -1,0 +1,45 @@
+
+CREATE TABLE SAVINGS_ACCOUNT (
+    accId NUMBER PRIMARY KEY,
+    customerID NUMBER,
+    balance NUMBER
+);
+
+INSERT INTO SAVINGS_ACCOUNT VALUES (1, 101, 125000);
+INSERT INTO SAVINGS_ACCOUNT VALUES (2, 102, 32520.08);
+INSERT INTO SAVINGS_ACCOUNT VALUES (3, 103, 58003);
+INSERT INTO SAVINGS_ACCOUNT VALUES (4, 104, 98000);
+
+COMMIT;
+
+CREATE OR REPLACE PROCEDURE ProcessMonthlyInterest
+AS
+BEGIN
+
+   FOR acc IN (
+      SELECT accId, balance
+      FROM SAVINGS_ACCOUNT
+   )
+   LOOP
+
+      UPDATE SAVINGS_ACCOUNT
+      SET balance = acc.balance + (acc.balance * 0.01)
+      WHERE accId = acc.accId;
+
+   END LOOP;
+
+   COMMIT;
+
+   DBMS_OUTPUT.PUT_LINE(
+      'Monthly Interest Applied Successfully'
+   );
+
+END;
+/
+
+BEGIN
+   ProcessMonthlyInterest;
+END;
+/
+
+SELECT * FROM SAVINGS_ACCOUNT;
